@@ -1,1 +1,41 @@
+<h1><%= @post.title %></h1>
+<h2>
+  <% @post.categories.each do |cat|%>
+  <p><%= cat.name %></p>
+  <% end %>
+</h2>
+<h3><%= @post.content %></h3>
+<ul>
+  <% @post.comments.each do |comment| %>
+    <li style="color: tomato"><%= comment.user.username%> says: <%= comment.content %></li>
+  <% end %>
+  </ul>
 
+  <%= form_for @post do |f| %>
+    <%= f.fields_for :comments, @post.comments.build do |comments_fields| %>
+      <%= f.label "Enter Comment:" %><br />
+      <%= comments_fields.text_field :content , id: 'comment_content'%><br />
+    <% end %>
+    <%= f.fields_for :users, @post.users.build do |users_fields| %>
+      <br />
+      <%= users_fields.label "Enter username:" %><br />
+      <%= users_fields.text_field :username, list: "users_autocomplete" , id: "comment_user_id"%><br />
+        <datalist id="users_autocomplete">
+          <% User.all.each do |user| %>
+            <option value="<%= user.username %>">
+          <% end %>
+        </datalist>
+
+
+        <%= users_fields.label "Enter email:" %><br />
+        <%= users_fields.text_field :email, id: "comment_user_attributes_username"%><br />
+    <% end %>
+    <%= f.submit "Create Comment"%>
+  <% end %>
+
+  <h5>Posters</h5>
+  <% @posters.each do |user| %>
+      <p>
+        <%= link_to(user.username, user_path(user)) %>
+        </p>
+  <% end %>
