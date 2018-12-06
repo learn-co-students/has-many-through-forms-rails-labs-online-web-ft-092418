@@ -1,1 +1,45 @@
+<%= render @post %>
 
+
+
+<!-- SHOW COMMENTS: -->
+<% unless @post.comments.empty? %>
+    <% @post.comments.each do |c| %>
+    <br>||||||||||||||||
+    <br>
+        <p><%= c.user.username %> says: <%= c.content %></p>
+
+    <% end %>
+<% end %>
+
+<!-- list of commenters -->
+
+<br> these folks commented:
+<br>
+<% commenters = @post.comments.collect {|comment| comment.user }.uniq %>
+<% commenters.each do |c| %>
+    <%= link_to c.username, user_path(c) %>
+<% end %>
+
+
+
+<!-- comment form: -->
+<br><br><br>
+
+<%= form_for @post.comments.build do |f| %>
+  
+  <%= f.label "Comment" %> <br>
+  <%= f.text_area :content %>
+  <%= f.collection_select :user_id, User.all, :id, :username, include_blank: true %>
+  
+  <%= f.hidden_field :post_id %>
+
+  <%= f.fields_for :user, @post.users.build do |user_fields| %>
+    <%= user_fields.text_field :username %>
+  <% end %>
+
+  <%= f.submit %>
+
+<% end %>
+
+<br><br><br>
